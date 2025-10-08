@@ -12,7 +12,7 @@ Extracts common camera settings and image properties:
 - GPS coordinates (if available)
 
 Usage:
-    python extract_metadata.py --images <dir> --output metadata.csv
+    python extract_metadata_fun.py --images <dir> --output metadata.csv
 """
 
 import argparse
@@ -98,7 +98,9 @@ def get_image_dimensions(image_path: str) -> tuple:
 def extract_metadata_from_image(image_path: str) -> Dict:
     """Extract all metadata from a single image."""
     exif_data = get_exif_data(image_path)
-    gps_data = get_gps_data(exif_data)
+    # if not getting gps data
+    # gps_data = get_gps_data(exif_data)
+
     
     # Get image dimensions
     width, height = get_image_dimensions(image_path)
@@ -148,11 +150,11 @@ def extract_metadata_from_image(image_path: str) -> Dict:
     # White balance
     metadata['white_balance'] = str(exif_data.get('EXIF WhiteBalance', ''))
     
-    # GPS coordinates
-    lat, lon = format_gps_coordinates(gps_data)
-    metadata['gps_latitude'] = lat
-    metadata['gps_longitude'] = lon
-    metadata['gps_altitude'] = str(gps_data.get('GPS GPSAltitude', ''))
+    # # GPS coordinates
+    # lat, lon = format_gps_coordinates(gps_data)
+    # metadata['gps_latitude'] = lat
+    # metadata['gps_longitude'] = lon
+    # metadata['gps_altitude'] = str(gps_data.get('GPS GPSAltitude', ''))
     
     # Orientation
     metadata['orientation'] = str(exif_data.get('Image Orientation', ''))
@@ -178,12 +180,12 @@ def extract_metadata_from_directory(images_dir: str, output_csv: str) -> None:
     if not image_paths:
         raise FileNotFoundError(f"No images found in directory: {images_dir}")
     
-    print(f"Found {len(image_paths)} images to process...")
+    # print(f"Found {len(image_paths)} images to process...")
     
     # Extract metadata from all images
     all_metadata = []
     for i, img_path in enumerate(image_paths):
-        print(f"Processing {i+1}/{len(image_paths)}: {os.path.basename(img_path)}")
+        # print(f"Processing {i+1}/{len(image_paths)}: {os.path.basename(img_path)}")
         metadata = extract_metadata_from_image(img_path)
         all_metadata.append(metadata)
     
@@ -197,40 +199,9 @@ def extract_metadata_from_directory(images_dir: str, output_csv: str) -> None:
             writer.writeheader()
             writer.writerows(all_metadata)
         
-        print(f"Metadata saved to: {output_csv}")
-        print(f"Processed {len(all_metadata)} images")
+        # print(f"Metadata saved to: {output_csv}")
+        # print(f"Processed {len(all_metadata)} images")
     else:
         print("No metadata extracted")
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Extract EXIF metadata from images and save to CSV"
-    )
-    parser.add_argument(
-        "--images", 
-        required=True, 
-        help="Directory containing images"
-    )
-    parser.add_argument(
-        "--output", 
-        required=True, 
-        help="Output CSV file path"
-    )
-    
-    args = parser.parse_args()
-    
-    if not os.path.exists(args.images):
-        print(f"Error: Directory '{args.images}' not found!")
-        return 1
-    
-    try:
-        extract_metadata_from_directory(args.images, args.output)
-        return 0
-    except Exception as e:
-        print(f"Error: {e}")
-        return 1
-
-
-if __name__ == "__main__":
-    exit(main())

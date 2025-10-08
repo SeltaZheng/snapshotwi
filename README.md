@@ -63,7 +63,7 @@ Notes:
 ### Extract image metadata
 
 ```bash
-python extract_metadata.py --images <dir_of_images> --output metadata.csv
+python extract_metadata_fun.py --images <dir_of_images> --output metadata.csv
 ```
 
 Extracts EXIF data including:
