@@ -1,5 +1,5 @@
 """
-evaluate the model performance from FPE platform
+evaluate the model performance from FPE platform for sites within the training set
 """
 import glob, os
 
